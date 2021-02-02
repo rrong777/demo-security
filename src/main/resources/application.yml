@@ -1,0 +1,22 @@
+# pom文件依赖了jdbc-starter，但是没有指明数据源
+# Cannot determine embedded database driver class for database type NONE
+# 数据库版本的问题
+spring:
+  datasource:
+    url: jdbc:mysql://124.70.157.93:3306/liangshi?useSSL=false&useUnicode=true&zeroDateTimeBehavior=convertToNull&autoReconnect=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    username: dbls
+    password: 123456t
+# No Spring Session store is configured: set the 'spring.session.store-type' property
+# 加入了SpringSession的集群session管理依赖，没有做默认配置，就会报错
+  session:
+    store-type: none
+
+
+server:
+  port: 8070
+
+# Using default security password: e35ee0c3-67d0-440d-b5fd-28a8e1ea8377
+# 加入spring-security的依赖之后默认会开启校验。没提供配置，会给你默认的配置默认的密码
+security:
+  basic:
+    enabled: false

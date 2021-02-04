@@ -12,7 +12,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
 // 静态导入 直接调用
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -83,4 +87,68 @@ public class UserControllerTest {
                 .andExpect(status().is4xxClientError());
 
     }
+
+    /**
+     * 时间戳目前只有13位，我觉得到16位之后 程序已经不在用了，所以时间戳前台可以直接使用数值来传  不会经度损失
+     * 前台数值超过16位就会精度损失。
+     *
+     * 前台传birthDay： 时间戳，会被Date birthDay 参数直接转换为 Java 日期格式，任何一门语言都有能处理时间戳 <->时间格式的能力
+     * 后台传日期格式给前台，又直接变成时间戳了。
+     * HttpResult 序列化的时候怎么办，会把日期直接序列化 toString 不会转成时间戳
+     *
+     * @throws Exception
+     */
+    @Test
+    public void whenCreateSuccess() throws Exception {
+        Date date = new Date();
+        System.out.println(date.getTime());
+        // 发送过去的内容   405 请求不匹配，但是有找到处理这个url的handler
+        String content = "{\"username\":\"tom\", \"password\": null, \"birthDay\": "+date.getTime()+"}";
+        System.out.println(content);
+        String result = mockMvc.perform(post("/user").contentType(MediaType.APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andReturn().getResponse().getContentAsString(); // 期望返回的id是1
+        System.out.println(result);
+    }
+
+    /**
+     * get 查
+     * post 增
+     * put 修改
+     * delete 删除
+     * @throws Exception
+     */
+    @Test
+    public void whenUpdateSuccess() throws Exception {
+        // LocalDateTime 1.8 新增的操作日期的api
+        // plusYears() 操作时间 atZone 时区 为默认时区 拿到一个一年以后的时间当作生日传过去
+
+        // must be in the past
+        //may not be empty
+        // BindingResult 绑定了如上两个错误，进入程序运行
+        Date date = new Date(LocalDateTime.now().plusYears(1).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli());
+        System.out.println(date.getTime());
+        // 发送过去的内容   405 请求不匹配，但是有找到处理这个url的handler
+        String content = "{\"id\": 1,\"username\":\"tom\", \"password\": null, \"birthDay\": "+date.getTime()+"}";
+        System.out.println(content);
+        String result = mockMvc.perform(put("/user/1").contentType(MediaType.APPLICATION_JSON_UTF8).content(content))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value("1"))
+                .andReturn().getResponse().getContentAsString(); // 期望返回的id是1
+        System.out.println(result);
+    }
+
+    /**
+     * 删除测试用例，并没有判断 返回的content 因为RestFul是通过响应状态码判断 请求结果的，删除除了成功就是失败，不需要content
+     * @throws Exception
+     */
+    @Test
+    public void whenDeleteSuccess() throws Exception {
+        mockMvc.perform(delete("/user/1")
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk());
+    }
+
+
 }

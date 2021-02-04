@@ -7,9 +7,12 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +40,10 @@ import java.util.List;
  *        （3）.在controller方法上指定 返回值 （User） 是返回哪个视图的
  * 11. @GetMapping 继承自@RequestMapping 声明了method = RequestMethod.GET
  * 12. @RequestBody 映射请求体到Java方法的参数
+ * 13. 日期类型参数处理
+ * 14. @Valid注解和BindingResult验证请求参数的合法性并处理校验结果
+ *      dto 声明@NotBlank等校验注解，
+ *      handler方法入参创建对象的时候@Valid 使校验注解生效
  */
 @RestController
 @RequestMapping(value="/user")
@@ -70,5 +77,70 @@ public class UserController {
         user.setUsername("tom");
         user.setPassword("123");
         return user;
+    }
+
+    /**
+     * post请求的参数是在请求体里面的，请求体里面的参数想要通过形参列表直接接收需要使用@RequestBody注解，不然不会映射到handler的形参列表
+     * get请求是通过url中的参数直接映射到形参列表的同名参数，@RequestParam可以省写，可以使用@RquestParam的value或者name属性指定 形参接收请求url中的某个参数
+     *
+     * 日期处理：前台如何传一个字符串过来 后台直接变成date类型
+     *  前后台直接传递时间戳。前台决定时间戳如何展示，后台只负责提供一个时间戳，
+     *
+     *       * @Valid (// 校验，是否为空等)
+     *      *  做得好一点就是封装一下，差一点就是复制，一旦复制，就GG了，一旦修改要修改很多地方。
+     *      *  在DTO 实体类的参数声明上直接加一行 @NotBlank直接校验是否为空
+     *      * @NotBlank是hibernate.validator这个项目提供的一个注解
+     *      * @NotBlank 要和@Valid一起使用  要在创建这个对象的地方加上@Valid ，声明了hibernate.validator 里面的校验注解才会起作用
+     *      *  而一般就是@RequestBody 请求过来的参数里面的需要校验，所以在handler声明@Valid
+     *      *  此时如果password为null 返回400 请求格式错误
+     *      *  BindingResult和@Valid配合，现在加上@Valid之后没过验证，直接不进handler，加上BindingResult之后会进入handler 并且带上错误信息进入Controller
+     */
+    @PostMapping
+    public User create(@Valid @RequestBody User user, BindingResult errors) {
+        // 进入程序，是否有错误，
+        if(errors.hasErrors()) {
+            errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
+            // 此时在这里异常处理即可。这样子就不必反复的写校验逻辑，全部写在dto实体类里面就好了 ，其他有用到的地方都做校验即可
+        }
+        System.out.println(user.getUsername());
+        System.out.println(user.getPassword());
+        System.out.println(user.getId());
+        System.out.println(user.getBirthDay());
+        // 假设set完id  user就创建了
+        user.setId(1);
+        return user;
+    }
+
+    @PutMapping("/{id:\\d+}")
+    public User update(@Valid @RequestBody User user, BindingResult errors) {
+        // 进入程序，是否有错误，
+        if(errors.hasErrors()) {
+            /**
+             * error到底是什么东西（ObjectError）
+             */
+            errors.getAllErrors().stream().forEach(error -> {
+                FieldError fieldError = (FieldError) error;
+                // 但是这样每次自己拼接也很麻烦，可以拿到未过校验的属性。直接在dto加了validator注解的属性上 加上message
+                String message = fieldError.getField() + " " + error.getDefaultMessage();
+                System.out.println(message);
+            });
+            // 此时在这里异常处理即可。这样子就不必反复的写校验逻辑，全部写在dto实体类里面就好了 ，其他有用到的地方都做校验即可
+        }
+        System.out.println(user.getUsername());
+        System.out.println(user.getPassword());
+        System.out.println(user.getId());
+        System.out.println(user.getBirthDay());
+        // 假设set完id  user就创建了
+        user.setId(1);
+        return user;
+    }
+    /**
+     * 删除
+     *
+     * @param id
+     */
+    @DeleteMapping("/{id:\\d+}")
+    public void delete(@PathVariable String id) {
+        System.out.println(id);
     }
 }

@@ -3,6 +3,7 @@ package com.rrong777.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.rrong777.dto.User;
 import com.rrong777.dto.UserQueryCondition;
+import com.rrong777.exception.UserNotExistException;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
@@ -64,19 +65,46 @@ public class UserController {
         return users;
     }
 
+    /**
+     * 这个handler和上面的handler是一样的。只不过是这个handler会抛出异常。测试SpingBoot如何对于程序中的运行时异常
+     * 进行处理
+     * @param userQueryCondition
+     * @param pageable
+     * @return
+     */
+//    @GetMapping
+//    @JsonView(User.UserSimpleView.class) // 查询方法指定简单视图
+//    public List<User> query(UserQueryCondition userQueryCondition, @PageableDefault(size = 10, page = 2, sort = "username, asc") Pageable pageable) {
+//        throw new RuntimeException("user not  exist");
+//    }
+
     // @PathVariable 将 RequestMapping 中声明的片段映射到方法入参中。id片段作为id参数的值传递过去
     // @PathVariable 的name和value属性的作用是一样的
     // :\\d+ 只能接收数字
-    @RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
+//    @RequestMapping(value = "/{id:\\d+}", method = RequestMethod.GET)
+//    // name会将 url中的id 传给形参ids
+//    // required 是否必须  如果不指定name参数，形参名一定要和表达式中的片段名{xx}对上
+//    @JsonView(User.UserDetailView.class) // getInfo方法指定 详细视图
+//    public User getInfo(@PathVariable(name = "id") String ids) {
+//        System.out.println(ids);
+//        User user = new User();
+//        user.setUsername("tom");
+//        user.setPassword("123");
+//        return user;
+//    }
+
+    @GetMapping("/{id:\\d+}")
     // name会将 url中的id 传给形参ids
     // required 是否必须  如果不指定name参数，形参名一定要和表达式中的片段名{xx}对上
     @JsonView(User.UserDetailView.class) // getInfo方法指定 详细视图
-    public User getInfo(@PathVariable(name = "id") String ids) {
-        System.out.println(ids);
+    public User getInfo(@PathVariable String id) {
+//        throw new UserNotExistException(id); // 这个是测试 抛出异常到ControllerAdvice里面的
+        System.out.println("进入getInfo服务");
         User user = new User();
         user.setUsername("tom");
         user.setPassword("123");
         return user;
+
     }
 
     /**
@@ -95,13 +123,32 @@ public class UserController {
      *      *  此时如果password为null 返回400 请求格式错误
      *      *  BindingResult和@Valid配合，现在加上@Valid之后没过验证，直接不进handler，加上BindingResult之后会进入handler 并且带上错误信息进入Controller
      */
+//    @PostMapping
+//    public User create(@Valid @RequestBody User user, BindingResult errors) {
+//        // 进入程序，是否有错误，
+//        if(errors.hasErrors()) {
+//            errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
+//            // 此时在这里异常处理即可。这样子就不必反复的写校验逻辑，全部写在dto实体类里面就好了 ，其他有用到的地方都做校验即可
+//            // 传了这个bindingResult就会进入Controller  这里要自己做处理
+//        }
+//        System.out.println(user.getUsername());
+//        System.out.println(user.getPassword());
+//        System.out.println(user.getId());
+//        System.out.println(user.getBirthDay());
+//        // 假设set完id  user就创建了
+//        user.setId(1);
+//        return user;
+//    }
+
+    /**
+     * 这个handler和上面的handler是一样的，只是上面的handler可以进入，进入之后可以拿到错误消息等。
+     * 这个controller直接拦住 还没有进入handler SpringBoot直接返回错误消息
+     * @param user
+     * @return
+     */
     @PostMapping
-    public User create(@Valid @RequestBody User user, BindingResult errors) {
+    public User create(@Valid @RequestBody User user) {
         // 进入程序，是否有错误，
-        if(errors.hasErrors()) {
-            errors.getAllErrors().stream().forEach(error -> System.out.println(error.getDefaultMessage()));
-            // 此时在这里异常处理即可。这样子就不必反复的写校验逻辑，全部写在dto实体类里面就好了 ，其他有用到的地方都做校验即可
-        }
         System.out.println(user.getUsername());
         System.out.println(user.getPassword());
         System.out.println(user.getId());

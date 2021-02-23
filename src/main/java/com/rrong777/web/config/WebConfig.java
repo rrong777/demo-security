@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
@@ -26,7 +27,33 @@ public class WebConfig extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(timeInterceptor);
+        // 拦截器注释掉 测试其他功能
+//        registry.addInterceptor(timeInterceptor);
+    }
+
+    /**
+     * 这个方法用来配置异步支持的。
+     * @param configurer
+     */
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        // 下面这个方法是给Runnable方式的异步处理请求配置拦截器
+        // 这个方法的入参类型是CallableProcessingInterceptor
+        // 这个CallableProcessingInterceptor和我们之前讲的拦截器有相同的地方，
+        // 有beforeConcurrentHandling 处理handler之前的逻辑
+        // preProcess()
+        // postProcess()这些都是有的，
+        // 但是还有额外的。handleTimeout()  异步请求超时了是怎么处理的。
+//        configurer.registerCallableInterceptors()
+//        configurer.setDefaultTimeout() 设置异步处理请求的默认的超时时间 因为你是开了另一个线程去处理这个东西。
+        // 这些线程有可能阻塞 有可能死掉。在多长时间内，这个多线程处理没有完毕，我们这个请求就返回给前端，这个是超时时间的一个设置
+//        configurer.setTaskExecutor()
+        // 由runnable去执行异步请求的时候，实际上Spring是用了自己的一个简易的异步线程池进行处理的。不是一个真正的线程池，
+        // 不会重用里面的线程，每一次被调用都是新开一个新线程，你可以自己去设置一个线程池替代spring这种不可重用的简易线程池。
+        // 下面是给DeferredResult方式异步处理请求配置拦截器
+//        configurer.registerDeferredResultInterceptors()
+        // 之前的注册拦截器，是使用下面的addIntegerceptors() 注册但是在异步处理请求的情况下，跟同步是不一样的，所以
+        // 要使用上面两种方式
     }
 
     /**

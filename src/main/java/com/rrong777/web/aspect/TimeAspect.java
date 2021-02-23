@@ -10,8 +10,9 @@ import java.util.Date;
  * Aspect注解表明这是一个切面。
  * Component注解让这个切面生效
  */
-@Aspect
-@Component
+// 拦截器注释掉 测试其他功能
+//@Aspect
+//@Component
 public class TimeAspect {
     /**
      *      定义切入点。

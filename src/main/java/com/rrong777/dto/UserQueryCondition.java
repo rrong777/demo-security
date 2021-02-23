@@ -1,9 +1,12 @@
 package com.rrong777.dto;
 
+import io.swagger.annotations.ApiModelProperty;
+
 /**
  * 业务复杂的查询，一个个写参数麻烦，而且读起来也麻烦，判断起来也麻烦，写一个实体类接收参数
  */
 public class UserQueryCondition {
+    @ApiModelProperty("用户年龄起始值") // 封装在对象中的请求参数，可以用@ApiModelProperty进行描述，最后生成在swagger文档中
     private String username;
     private int age;
 

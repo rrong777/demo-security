@@ -77,6 +77,19 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+<!--        swagger核心的包，会来扫描你的程序生成文档数据-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+            <version>2.7.0</version>
+        </dependency>
+
+<!--        这个是swagger 的ui包，生成最终我们看到的可视化界面-->
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+            <version>2.7.0</version>
+        </dependency>
 <!--        IO的工具包-->
         <dependency>
             <groupId>commons-io</groupId>

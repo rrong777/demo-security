@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.rrong777.dto.User;
 import com.rrong777.dto.UserQueryCondition;
 import com.rrong777.exception.UserNotExistException;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
@@ -53,6 +55,7 @@ public class UserController {
     // Pageable 这个是SpringData中的一个对象，就是分页对象
     // @PageableDefault 给 Pageable赋默认值
     @GetMapping
+    @ApiOperation("用户查询服务") // 这个对于方法的描述会出现在swagger文档中，@ApiOperation
     @JsonView(User.UserSimpleView.class) // 查询方法指定简单视图
     public List<User> query(UserQueryCondition userQueryCondition, @PageableDefault(size = 10, page = 2, sort = "username, asc") Pageable pageable) {
         //  ReflectionToStringBuilder 反射的toString的工具，把Condition打印在控制台上
@@ -96,8 +99,8 @@ public class UserController {
     @GetMapping("/{id:\\d+}")
     // name会将 url中的id 传给形参ids
     // required 是否必须  如果不指定name参数，形参名一定要和表达式中的片段名{xx}对上
-    @JsonView(User.UserDetailView.class) // getInfo方法指定 详细视图
-    public User getInfo(@PathVariable String id) {
+    @JsonView(User.UserDetailView.class) // getInfo方法指定 详细视图  @ApiParam("用户id") 对于没有封装在对象中的请求参数，使用这个注解可以描述参数，在swagger文档中显示
+    public User getInfo(@ApiParam("用户id") @PathVariable String id) {
 //        throw new UserNotExistException(id); // 这个是测试 抛出异常到ControllerAdvice里面的
         System.out.println("进入getInfo服务");
         User user = new User();

@@ -20,3 +20,14 @@ server:
 security:
   basic:
     enabled: false
+
+# 当我们使用我们这个安全模块的项目 配置了下面这个loginPage的时候，我们就用这个loginPage，没有做这个配置的时候，就用我们默认的标准登录页面。
+# 最终完成的安全模块，提供很多配置项目，根据自己的情况去配置项目
+      # 如果下面这段配置注释掉了，会直接用默认的
+#rrong777:
+#  security:
+#    browser:
+#      loginPage:
+#        /demo-signIn.html
+      # 如果这里没写 / 会转发到带BrowserSecurityController中读取了这个loginPage 会从http://localhost:8070/authentication/require
+      # 转发到 http://localhost:8070/authentication/demo-signIn.html 然后重定向次数太多。 如果不明白的话 这里还有BrowserProperties中 去掉 / 就知道怎么回事了

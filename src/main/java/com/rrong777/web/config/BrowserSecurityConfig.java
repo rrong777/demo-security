@@ -1,5 +1,7 @@
 package com.rrong777.web.config;
 
+import com.rrong777.web.properties.SecurityProerties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -12,7 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
  */
 @Configuration
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
-
+    @Autowired
+    private SecurityProerties securityProerties;
     @Bean
     public PasswordEncoder passwordEncoder() {
         // BCryptPasswordEncoder是Security提供的一个PasswordEncoder接口的实现类
@@ -27,13 +30,16 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         // 下面无行做了一个最简单的security的配置，使用表单认证，对所有请求都要进行认证。
         http.formLogin()// 指定认证方式为表单认证
-                .loginPage("/rrong777-signIn.html") // 指定登录页面，登录的时候就会去找这么一个页面。（没有前后端分离）
+//                .loginPage("/rrong777-signIn.html") // 指定登录页面，登录的时候就会去找这么一个页面。（没有前后端分离）
+                .loginPage("/authentication/require") // 需要认证的请求全部指向一个控制器 去判断直接返回 html或者返回json
                 .loginProcessingUrl("/authentication/form") // 让UsernamePasswordAuthenticationFilter处理这个路径（告知这是登录认证的请求）
                 // security 默认的配置就是下面五行代码
 //        http.httpBasic() httpBasic认证
                 .and()
                 .authorizeRequests() // 请求需要认证
-                .antMatchers("/rrong777-signIn.html").permitAll() // 放开访问控制 针对特定url不需要认证即可访问
+//                .antMatchers("/rrong777-signIn.html").permitAll() // 放开访问控制 针对特定url不需要认证即可访问
+                // 需要认证的都去这个控制器，然后决定返回json或者 登录页，登录页也不需要认证，如果请求的是登录页，就直接返回登录页让你登录
+                .antMatchers("/authentication/require", securityProerties.getBrowser().getLoginPage()).permitAll()
                 .anyRequest() // 任何请求
                 .authenticated() // 进行认证
                 .and().csrf().disable();

@@ -3,6 +3,7 @@ package com.rrong777.web.authentication;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrong777.web.properties.LoginType;
 import com.rrong777.web.properties.SecurityProerties;
+import com.rrong777.web.support.SimpleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,8 @@ public class RrrongAuthenticationFailureHandler extends SimpleUrlAuthenticationF
         if(LoginType.JSON.equals(securityProerties.getBrowser().getLoginType())) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write(objectMapper.writeValueAsString(exception));
+            // 异常转换未json输出太长了，只要msg转回就行了
+            response.getWriter().write(objectMapper.writeValueAsString(new SimpleResponse(exception.getMessage())));
         } else {
             // Spring默认的处理方式，跳转到一个错误页面去
             super.onAuthenticationFailure(request,response, exception);

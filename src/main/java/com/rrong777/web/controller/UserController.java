@@ -10,9 +10,14 @@ import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import sun.plugin.liveconnect.SecurityContextHelper;
 
 
 import javax.validation.Valid;
@@ -51,6 +56,16 @@ import java.util.List;
 @RestController
 @RequestMapping(value="/user")
 public class UserController {
+    @GetMapping("/me")
+//    public Object getCurrentUser(Authentication authentication) {
+    //可以直接在controller入参里面入一个authentication，security会把认证信息对象塞给你
+
+    // 但是考虑到我可能不需要所有的认证信息，我只要对应的用户信息，这里就可以用这个注解，把用户返回
+    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user) {
+        // 这就可以拿到线程中的authentication对象。但是这样有点麻烦，
+//        return SecurityContextHolder.getContext().getAuthentication();
+        return user;
+    }
     // @PageableDefault指定分页参数默认值
     // Pageable 这个是SpringData中的一个对象，就是分页对象
     // @PageableDefault 给 Pageable赋默认值

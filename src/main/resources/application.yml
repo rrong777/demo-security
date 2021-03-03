@@ -31,3 +31,8 @@ security:
 #        /demo-signIn.html
       # 如果这里没写 / 会转发到带BrowserSecurityController中读取了这个loginPage 会从http://localhost:8070/authentication/require
       # 转发到 http://localhost:8070/authentication/demo-signIn.html 然后重定向次数太多。 如果不明白的话 这里还有BrowserProperties中 去掉 / 就知道怎么回事了
+rrong777:
+  security:
+    browser:
+      loginType:
+        REDIRECT

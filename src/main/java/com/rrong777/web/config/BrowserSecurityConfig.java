@@ -49,7 +49,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests() // 请求需要认证
 //                .antMatchers("/rrong777-signIn.html").permitAll() // 放开访问控制 针对特定url不需要认证即可访问
                 // 需要认证的都去这个控制器，然后决定返回json或者 登录页，登录页也不需要认证，如果请求的是登录页，就直接返回登录页让你登录
-                .antMatchers("/authentication/require", securityProerties.getBrowser().getLoginPage()).permitAll()
+                .antMatchers("/authentication/require",
+                                        securityProerties.getBrowser().getLoginPage(),
+                                        "/code/image").permitAll()
                 .anyRequest() // 任何请求
                 .authenticated() // 进行认证
                 .and().csrf().disable();

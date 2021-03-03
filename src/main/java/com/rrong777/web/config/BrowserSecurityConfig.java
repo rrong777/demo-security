@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 /**
  *  WebSecurityConfigurerAdapter - SpringSecurity提供的一个适配器类，专门用来做web应用安全配置的适配器
@@ -16,6 +18,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private SecurityProerties securityProerties;
+    // 做一个配置，登录成功以后使用我们自定义的登录成功处理器。而不用Spring默认的处理器（默认处理就是登录成功后就转发到引起
+    // 登录的请求）。把自己写的注入进来。
+    @Autowired
+    private AuthenticationSuccessHandler rrongAuthenticationHandler;
+    @Autowired
+    private AuthenticationFailureHandler rrongAuthenticationFailureHandler;
     @Bean
     public PasswordEncoder passwordEncoder() {
         // BCryptPasswordEncoder是Security提供的一个PasswordEncoder接口的实现类
@@ -33,6 +41,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
 //                .loginPage("/rrong777-signIn.html") // 指定登录页面，登录的时候就会去找这么一个页面。（没有前后端分离）
                 .loginPage("/authentication/require") // 需要认证的请求全部指向一个控制器 去判断直接返回 html或者返回json
                 .loginProcessingUrl("/authentication/form") // 让UsernamePasswordAuthenticationFilter处理这个路径（告知这是登录认证的请求）
+                .successHandler(rrongAuthenticationHandler) // 登录成功以后就会使用我们自己写的这个登录成功的处理器来处理了。
+                .failureHandler(rrongAuthenticationFailureHandler)
                 // security 默认的配置就是下面五行代码
 //        http.httpBasic() httpBasic认证
                 .and()

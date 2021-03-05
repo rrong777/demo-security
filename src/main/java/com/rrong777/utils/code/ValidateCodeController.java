@@ -1,7 +1,10 @@
 package com.rrong777.utils.code;
 
+import com.rrong777.web.properties.SecurityProerties;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
+import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -17,20 +20,24 @@ import java.util.Random;
 @RestController
 public class ValidateCodeController {
     public static final String SESSION_KEY = "SESSION_KEY_IMAGE_CODE";
+    @Autowired
+    private SecurityProerties securityProerties;
+
     // Spring操作session 的工具类
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
     @GetMapping("/code/image")
     public void createCode(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        ImageCode imageCode = createImageCode(request);
+        ImageCode imageCode = generate(new ServletWebRequest(request));
         // 第一个参数将请求放到这个工具类，然后工具类从请求中拿session，第二个参数是我们放到session里面的东西的key,第三个就是我们的imageCode
         sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_KEY, imageCode);
         // 把image往外写，写一个jpeg格式的文件，往response的输出留里面写
         ImageIO.write(imageCode.getImage(), "JPEG", response.getOutputStream());
     }
 
-    private ImageCode createImageCode(HttpServletRequest request) {
-        int width = 67;
-        int height = 23;
+    private ImageCode generate(ServletWebRequest request) {
+        // getIntParameter 从请求中取一个 int 参数  参数名叫width  取不到的话给第三个默认值
+        int width = ServletRequestUtils.getIntParameter(request.getRequest(), "width", securityProerties.getCode().getImage().getWidth());
+        int height = ServletRequestUtils.getIntParameter(request.getRequest(), "height", securityProerties.getCode().getImage().getHeight());
         // 生成一个图片对象
         BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Graphics g = image.getGraphics();
@@ -51,7 +58,7 @@ public class ValidateCodeController {
 
         // 生成4位的随机数
         String sRand = "";
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < securityProerties.getCode().getImage().getLength(); i++) {
             String rand = String.valueOf(random.nextInt(10));
             sRand += rand;
             g.setColor(new Color(20 + random.nextInt(110), 20 + random.nextInt(110), 20 + random.nextInt(110)));

@@ -36,3 +36,9 @@ security:
 #    browser:
 #      loginType:
 #        REDIRECT
+
+rrong777:
+  security:
+    code:
+      image:
+        length: 6

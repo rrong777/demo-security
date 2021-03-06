@@ -68,7 +68,7 @@ public class ValidateCodeController {
 
         g.dispose();
 
-        return new ImageCode(image, sRand, 60);
+        return new ImageCode(image, sRand, securityProerties.getCode().getImage().getExpireIn());
     }
     private Color getRandColor(int fc, int bc) {
         Random random = new Random();

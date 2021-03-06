@@ -40,6 +40,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
         validateCodeFilter.setAuthenticationFailureHandler(rrongAuthenticationFailureHandler);
+        validateCodeFilter.setSecurityProerties(securityProerties);
+        validateCodeFilter.afterPropertiesSet();
         // 下面无行做了一个最简单的security的配置，使用表单认证，对所有请求都要进行认证。
         http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()// 指定认证方式为表单认证

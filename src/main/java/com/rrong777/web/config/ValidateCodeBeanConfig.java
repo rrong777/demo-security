@@ -1,7 +1,7 @@
 package com.rrong777.web.config;
 
-import com.rrong777.utils.code.ImageCodeGenarator;
-import com.rrong777.utils.code.ValidateCodeGenerator;
+import com.rrong777.utils.code.image.ImageCodeGenarator;
+import com.rrong777.utils.code.image.ValidateCodeGenerator;
 import com.rrong777.web.properties.SecurityProerties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

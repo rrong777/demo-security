@@ -1,4 +1,4 @@
-package com.rrong777.utils.code;
+package com.rrong777.utils.code.image;
 
 import com.rrong777.web.properties.SecurityProerties;
 import org.apache.commons.lang.StringUtils;

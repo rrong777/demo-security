@@ -1,7 +1,6 @@
-package com.rrong777.utils.code;
+package com.rrong777.utils.code.image;
 
 import com.rrong777.web.properties.SecurityProerties;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 

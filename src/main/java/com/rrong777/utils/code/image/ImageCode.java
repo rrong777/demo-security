@@ -1,4 +1,4 @@
-package com.rrong777.utils.code;
+package com.rrong777.utils.code.image;
 
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;

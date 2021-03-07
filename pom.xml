@@ -77,6 +77,12 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
         </dependency>
+        <!-- 阿里Sms服务依赖 -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>aliyun-java-sdk-core</artifactId>
+            <version>4.0.3</version>
+        </dependency>
 <!--        swagger核心的包，会来扫描你的程序生成文档数据-->
         <dependency>
             <groupId>io.springfox</groupId>

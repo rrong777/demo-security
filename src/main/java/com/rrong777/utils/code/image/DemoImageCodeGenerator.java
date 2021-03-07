@@ -1,6 +1,5 @@
-package com.rrong777.utils.code;
+package com.rrong777.utils.code.image;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 // 自己注入一个  覆盖掉默认的验证码生成逻辑。但是用这个会抛空指针，因为没有返回，这里只是示范如何覆盖掉默认的逻辑

@@ -40,8 +40,10 @@ public class ValidateCodeFilter extends OncePerRequestFilter implements Initiali
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
         String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(securityProerties.getCode().getImage().getUrl(), ",");
-        for(String configUrl : configUrls) {
-            urls.add(configUrl);
+        if(configUrls != null) {
+            for(String configUrl : configUrls) {
+                urls.add(configUrl);
+            }
         }
         // 登录请求是一定要做验证码的。
         urls.add("/authentication/form");

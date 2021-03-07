@@ -7,11 +7,16 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+
+import javax.sql.DataSource;
 
 /**
  *  WebSecurityConfigurerAdapter - SpringSecurity提供的一个适配器类，专门用来做web应用安全配置的适配器
@@ -26,6 +31,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler rrongAuthenticationHandler;
     @Autowired
     private AuthenticationFailureHandler rrongAuthenticationFailureHandler;
+
+    @Autowired
+    private DataSource dataSource;
+    // 记住我功能最后做验证的时候还要去根据用户密码查询用户信息，所以要有一个UserDetailsService
+    @Autowired
+    private UserDetailsService userDetailsService;
     @Bean
     public PasswordEncoder passwordEncoder() {
         // BCryptPasswordEncoder是Security提供的一个PasswordEncoder接口的实现类
@@ -36,6 +47,17 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         return new BCryptPasswordEncoder();
     }
 
+    // 记住我功能需要 存储token到数据库，所以要提供数据源，还有tokenRepository的实现，
+    // JdbcTokenRepositoryImpl 里面有sql脚本，我们可以自己实现，但是用他的就行了
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        // 需要一个数据源
+        tokenRepository.setDataSource(dataSource);
+        // 这个设置成true启动的时候会自动去创建表
+//        tokenRepository.setCreateTableOnStartup(true);
+        return tokenRepository;
+    }
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         ValidateCodeFilter validateCodeFilter = new ValidateCodeFilter();
@@ -46,10 +68,15 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()// 指定认证方式为表单认证
 //                .loginPage("/rrong777-signIn.html") // 指定登录页面，登录的时候就会去找这么一个页面。（没有前后端分离）
-                .loginPage("/authentication/require") // 需要认证的请求全部指向一个控制器 去判断直接返回 html或者返回json
-                .loginProcessingUrl("/authentication/form") // 让UsernamePasswordAuthenticationFilter处理这个路径（告知这是登录认证的请求）
-                .successHandler(rrongAuthenticationHandler) // 登录成功以后就会使用我们自己写的这个登录成功的处理器来处理了。
-                .failureHandler(rrongAuthenticationFailureHandler)
+                    .loginPage("/authentication/require") // 需要认证的请求全部指向一个控制器 去判断直接返回 html或者返回json
+                    .loginProcessingUrl("/authentication/form") // 让UsernamePasswordAuthenticationFilter处理这个路径（告知这是登录认证的请求）
+                    .successHandler(rrongAuthenticationHandler) // 登录成功以后就会使用我们自己写的这个登录成功的处理器来处理了。
+                    .failureHandler(rrongAuthenticationFailureHandler)
+                .and()
+                    .rememberMe()
+                    .tokenRepository(persistentTokenRepository())
+                    .tokenValiditySeconds(securityProerties.getBrowser().getRemembermeSeconds())
+                    .userDetailsService(userDetailsService)
                 // security 默认的配置就是下面五行代码
 //        http.httpBasic() httpBasic认证
                 .and()

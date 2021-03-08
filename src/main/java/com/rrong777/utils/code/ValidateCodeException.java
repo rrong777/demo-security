@@ -1,4 +1,4 @@
-package com.rrong777.utils.code.image;
+package com.rrong777.utils.code;
 
 
 import org.springframework.security.core.AuthenticationException;

@@ -1,6 +1,6 @@
 package com.rrong777.web.config;
 
-import com.rrong777.utils.code.image.ValidateCodeFilter;
+import com.rrong777.utils.code.ValidateCodeFilter;
 import com.rrong777.web.properties.SecurityProerties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

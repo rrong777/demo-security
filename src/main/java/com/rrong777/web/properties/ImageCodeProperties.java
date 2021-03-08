@@ -3,26 +3,19 @@ package com.rrong777.web.properties;
 /**
  * 最下层的默认配置(验证码的应用级默认配置)
  * 使用安全模块的项目不做任何配置就是使用这个应用级配置。
+ *
+ * 图形验证码和短信验证码配置上，很多属性都是重复的，那这个就可以继承短信验证码配置类，
+ * 但是图形验证码默认长度是4，短信验证码默认长度是6
  */
-public class ImageCodeProperties {
+public class ImageCodeProperties extends SmsCodeProperties{
+    public ImageCodeProperties() {
+        setLength(4);
+    }
+
     // 验证码图片宽度
     private int width = 67;
     // 验证码图片高度
     private int height = 23;
-    // 验证码位数
-    private int length = 4;
-    // 验证码过期时间
-    private int expireIn = 60;
-
-    private String url;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     public int getWidth() {
         return width;
@@ -38,21 +31,5 @@ public class ImageCodeProperties {
 
     public void setHeight(int height) {
         this.height = height;
-    }
-
-    public int getLength() {
-        return length;
-    }
-
-    public void setLength(int length) {
-        this.length = length;
-    }
-
-    public int getExpireIn() {
-        return expireIn;
-    }
-
-    public void setExpireIn(int expireIn) {
-        this.expireIn = expireIn;
     }
 }

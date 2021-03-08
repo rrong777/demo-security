@@ -1,5 +1,6 @@
-package com.rrong777.utils.code.image;
+package com.rrong777.utils.code;
 
+import com.rrong777.utils.code.image.ImageCode;
 import com.rrong777.web.properties.SecurityProerties;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;

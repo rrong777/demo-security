@@ -1,7 +1,10 @@
 package com.rrong777.web.config;
 
 import com.rrong777.utils.code.image.ImageCodeGenarator;
-import com.rrong777.utils.code.image.ValidateCodeGenerator;
+import com.rrong777.utils.code.ValidateCodeGenerator;
+import com.rrong777.utils.code.sms.DefaultSmsSender;
+import com.rrong777.utils.code.sms.SmsCodeGenarator;
+import com.rrong777.utils.code.sms.SmsCodeSender;
 import com.rrong777.web.properties.SecurityProerties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -22,5 +25,11 @@ public class ValidateCodeBeanConfig {
         ImageCodeGenarator imageCodeGenarator = new ImageCodeGenarator();
         imageCodeGenarator.setSecurityProerties(securityProerties);
         return imageCodeGenarator;
+    }
+    @Bean
+    @ConditionalOnMissingBean(SmsCodeSender.class) // 入参用一个class对象也可以
+    public SmsCodeSender smsCodeSender() {
+
+        return new DefaultSmsSender();
     }
 }

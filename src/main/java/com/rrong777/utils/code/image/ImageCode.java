@@ -1,25 +1,24 @@
 package com.rrong777.utils.code.image;
 
+import com.rrong777.utils.code.sms.ValidateCode;
+
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 
-public class ImageCode {
+// 新增短信验证码实体类之后，发现图像验证码只和短信验证码差一个image属性
+public class ImageCode extends ValidateCode {
     // 图形
     private BufferedImage image;
-    // 验证码
-    private String code;
-    // 过期时间
-    private LocalDateTime expireTime;
 
     public ImageCode(BufferedImage image, String code, LocalDateTime expireTime) {
+        // 如果子类构造器没有声明调用父类构造器的话，子类会先调用父类的无参构造器初始化父类中的参数.
+        // 所以这里要显式声明调用，不然父类没提供无参构造器会报错
+        super(code, expireTime);
         this.image = image;
-        this.code = code;
-        this.expireTime = expireTime;
     }
-    public ImageCode(BufferedImage image, String code, int expireIn) {
+    public ImageCode(BufferedImage image,String code, int expireIn) {
+        super(code, expireIn);
         this.image = image;
-        this.code = code;
-        this.expireTime = LocalDateTime.now().plusSeconds(expireIn);
     }
     
     public BufferedImage getImage() {
@@ -30,23 +29,4 @@ public class ImageCode {
         this.image = image;
     }
 
-    public String getCode() {
-        return code;
-    }
-
-    public void setCode(String code) {
-        this.code = code;
-    }
-
-    public LocalDateTime getExpireTime() {
-        return expireTime;
-    }
-
-    public void setExpireTime(LocalDateTime expireTime) {
-        this.expireTime = expireTime;
-    }
-
-    public boolean isExpried() {
-        return LocalDateTime.now().isAfter(expireTime);
-    }
 }

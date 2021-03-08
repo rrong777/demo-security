@@ -9,19 +9,29 @@ import java.time.LocalDateTime;
  * @Title: 短信验证码实体类
  * @Description: 封装短信验证码信息
  * @date 2020/4/19 13:51
+ * 但是图片验证码要继承这个类，因为图片验证码只是多了一个图片属性，图片验证码继承
+ * smscode又不合适，所以改名叫ValidateCode
  */
-public class SmsCode {
-    public SmsCode(String code) {
-        this.code = code;
-        this.setExpireTime();
-    }
-
+public class ValidateCode {
     // 短信验证码
     private String code;
-    // 短信验证码过期时间：60秒
-    public static final int EXPIRE_IN = 60;
     // 短信验证码过期时间
     public LocalDateTime expireTime;
+
+    public ValidateCode(String code, int expireIn) {
+        this.code = code;
+        this.expireTime = LocalDateTime.now().plusSeconds(expireIn);
+    }
+
+    public ValidateCode(String code, LocalDateTime expireTime) {
+        this.code = code;
+        this.expireTime = expireTime;
+    }
+
+    public boolean isExpried() {
+        return LocalDateTime.now().isAfter(expireTime);
+    }
+
 
     public String getCode() {
         return code;
@@ -35,8 +45,8 @@ public class SmsCode {
         return expireTime;
     }
 
-    public void setExpireTime() {
-        this.expireTime = LocalDateTime.now().plusSeconds(60);
+    public void setExpireTime(LocalDateTime expireTime) {
+        this.expireTime = expireTime;
     }
 
     /**
@@ -49,7 +59,7 @@ public class SmsCode {
 
     public static void main(String[] args) {
         String code = VerificationCodeUtils.generateVerificationCode();
-        SmsCode smsCode = new SmsCode(code);
+        ValidateCode smsCode = new ValidateCode(code, 60);
         SmsUtils.SendVerificationCodeBySms("13290981965", smsCode.getCode());
 
     }

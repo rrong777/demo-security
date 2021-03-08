@@ -6,6 +6,15 @@ package com.rrong777.web.properties;
 public class ValidateCodeProperties {
     // new出来的对象就有默认的
     private ImageCodeProperties image = new ImageCodeProperties();
+    private SmsCodeProperties sms = new SmsCodeProperties();
+
+    public SmsCodeProperties getSms() {
+        return sms;
+    }
+
+    public void setSms(SmsCodeProperties sms) {
+        this.sms = sms;
+    }
 
     public ImageCodeProperties getImage() {
         return image;

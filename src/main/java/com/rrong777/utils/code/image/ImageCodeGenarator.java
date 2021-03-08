@@ -1,5 +1,6 @@
 package com.rrong777.utils.code.image;
 
+import com.rrong777.utils.code.ValidateCodeGenerator;
 import com.rrong777.web.properties.SecurityProerties;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -8,7 +9,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Random;
 
-public class ImageCodeGenarator implements ValidateCodeGenerator{
+public class ImageCodeGenarator implements ValidateCodeGenerator {
     private SecurityProerties securityProerties;
     public ImageCode generate(ServletWebRequest request) {
         // getIntParameter 从请求中取一个 int 参数  参数名叫width  取不到的话给第三个默认值

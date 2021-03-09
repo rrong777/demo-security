@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-@Component("rrongAuthenticationHandler") // 声明成一个Spring容器中的bean
+@Component("rrongAuthenticationSuccessHandler") // 声明成一个Spring容器中的bean
 //public class RrrongAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
 // 此时不再实现这个认证成功处理器接口了，而是继承Security提供的默认的实现
 public class RrrongAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {

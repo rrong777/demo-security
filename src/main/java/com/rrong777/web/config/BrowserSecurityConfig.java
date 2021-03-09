@@ -1,6 +1,7 @@
 package com.rrong777.web.config;
 
 import com.rrong777.utils.code.ValidateCodeFilter;
+import com.rrong777.utils.sms.SmsCodeFilter;
 import com.rrong777.web.properties.SecurityProerties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -28,9 +29,12 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
     // 做一个配置，登录成功以后使用我们自定义的登录成功处理器。而不用Spring默认的处理器（默认处理就是登录成功后就转发到引起
     // 登录的请求）。把自己写的注入进来。
     @Autowired
-    private AuthenticationSuccessHandler rrongAuthenticationHandler;
+    private AuthenticationSuccessHandler rrongAuthenticationSuccessHandler;
     @Autowired
     private AuthenticationFailureHandler rrongAuthenticationFailureHandler;
+    //  导入另一个security配置类
+    @Autowired
+    private SmsCodeAuthenticationSecurityConfig smsCodeAuthenticationSecurityConfig;
 
     @Autowired
     private DataSource dataSource;
@@ -64,13 +68,20 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         validateCodeFilter.setAuthenticationFailureHandler(rrongAuthenticationFailureHandler);
         validateCodeFilter.setSecurityProerties(securityProerties);
         validateCodeFilter.afterPropertiesSet();
+
+        SmsCodeFilter smsCodeFilter = new SmsCodeFilter();
+        smsCodeFilter.setAuthenticationFailureHandler(rrongAuthenticationFailureHandler);
+        smsCodeFilter.setSecurityProerties(securityProerties);
+        smsCodeFilter.afterPropertiesSet();
+
         // 下面无行做了一个最简单的security的配置，使用表单认证，对所有请求都要进行认证。
         http.addFilterBefore(validateCodeFilter, UsernamePasswordAuthenticationFilter.class)
+            .addFilterBefore(smsCodeFilter, UsernamePasswordAuthenticationFilter.class)
                 .formLogin()// 指定认证方式为表单认证
 //                .loginPage("/rrong777-signIn.html") // 指定登录页面，登录的时候就会去找这么一个页面。（没有前后端分离）
                     .loginPage("/authentication/require") // 需要认证的请求全部指向一个控制器 去判断直接返回 html或者返回json
                     .loginProcessingUrl("/authentication/form") // 让UsernamePasswordAuthenticationFilter处理这个路径（告知这是登录认证的请求）
-                    .successHandler(rrongAuthenticationHandler) // 登录成功以后就会使用我们自己写的这个登录成功的处理器来处理了。
+                    .successHandler(rrongAuthenticationSuccessHandler) // 登录成功以后就会使用我们自己写的这个登录成功的处理器来处理了。
                     .failureHandler(rrongAuthenticationFailureHandler)
                 .and()
                     .rememberMe()
@@ -88,6 +99,7 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                                         "/code/image").permitAll()
                 .anyRequest() // 任何请求
                 .authenticated() // 进行认证
-                .and().csrf().disable();
+                .and().csrf().disable()
+                .apply(smsCodeAuthenticationSecurityConfig); // 把这个配置类的配置也加到这后面来
     }
 }

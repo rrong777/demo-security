@@ -1,8 +1,7 @@
 package com.rrong777.utils.sms;
 
-import com.rrong777.utils.code.ValidateCodeController;
 import com.rrong777.utils.code.ValidateCodeException;
-import com.rrong777.utils.code.image.ImageCode;
+import com.rrong777.utils.code.ValidateCodeProcessor;
 import com.rrong777.utils.code.sms.ValidateCode;
 import com.rrong777.web.properties.SecurityProerties;
 import org.apache.commons.lang.StringUtils;
@@ -94,7 +93,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         filterChain.doFilter(request, response);
     }
     public void validate(ServletWebRequest request) throws ServletRequestBindingException {
-        ValidateCode codeInSession = (ValidateCode)sessionStrategy.getAttribute (request, ValidateCodeController.SESSION_KEY + "SMS");
+        ValidateCode codeInSession = (ValidateCode)sessionStrategy.getAttribute (request, ValidateCodeProcessor.SESSION_KEY_PREFIX + "SMS");
 
         String codeInRequest = ServletRequestUtils.getStringParameter(request.getRequest(),
                 "smsCode");
@@ -108,7 +107,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         }
 
         if (codeInSession.isExpried()) {
-            sessionStrategy.removeAttribute(request, ValidateCodeController.SESSION_KEY + "SMS");
+            sessionStrategy.removeAttribute(request, ValidateCodeProcessor.SESSION_KEY_PREFIX + "SMS");
             throw new ValidateCodeException("验证码已过期");
         }
 
@@ -116,7 +115,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
             throw new ValidateCodeException("验证码不匹配");
         }
 
-        sessionStrategy.removeAttribute(request, ValidateCodeController.SESSION_KEY + "SMS");
+        sessionStrategy.removeAttribute(request, ValidateCodeProcessor.SESSION_KEY_PREFIX + "SMS");
 
     }
 }

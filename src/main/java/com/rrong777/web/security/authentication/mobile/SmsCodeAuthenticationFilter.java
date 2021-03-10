@@ -26,7 +26,7 @@ public class SmsCodeAuthenticationFilter extends
 
     public SmsCodeAuthenticationFilter() {
         // 请求处理的url 和处理的请求的方式
-        super(new AntPathRequestMatcher("/authtication/mobile", "POST"));
+        super(new AntPathRequestMatcher("/authentication/mobile", "POST"));
     }
 
 

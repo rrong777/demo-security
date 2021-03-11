@@ -2,14 +2,13 @@ package com.rrong777.web.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrong777.web.properties.LoginType;
-import com.rrong777.web.properties.SecurityProerties;
+import com.rrong777.web.properties.SecurityProperties;
 import com.rrong777.web.support.SimpleResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
 import org.springframework.stereotype.Component;
 
@@ -23,7 +22,7 @@ import java.io.IOException;
 public class RrrongAuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
     private Logger logger = LoggerFactory.getLogger(getClass());
     @Autowired
-    private SecurityProerties securityProerties;
+    private SecurityProperties securityProperties;
     @Autowired
     private ObjectMapper objectMapper;
     /**
@@ -38,7 +37,7 @@ public class RrrongAuthenticationFailureHandler extends SimpleUrlAuthenticationF
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException {
         logger.info("登录失败");
-        if(LoginType.JSON.equals(securityProerties.getBrowser().getLoginType())) {
+        if(LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())) {
             response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             response.setContentType("application/json;charset=UTF-8");
             // 异常转换未json输出太长了，只要msg转回就行了

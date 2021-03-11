@@ -3,12 +3,11 @@ package com.rrong777.web.authentication;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.rrong777.web.properties.LoginType;
-import com.rrong777.web.properties.SecurityProerties;
+import com.rrong777.web.properties.SecurityProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
@@ -24,7 +23,7 @@ public class RrrongAuthenticationSuccessHandler extends SavedRequestAwareAuthent
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private SecurityProerties securityProerties;
+    private SecurityProperties securityProperties;
     @Autowired // Spring启动的时候会自动为我们注入一个ObjectMapper
     private ObjectMapper objectMapper;
     /**
@@ -42,7 +41,7 @@ public class RrrongAuthenticationSuccessHandler extends SavedRequestAwareAuthent
         logger.info("登录成功");
 
         // 自己配置的时候等于这个json。用我们自己的方式 不是的话 就super
-        if(LoginType.JSON.equals(securityProerties.getBrowser().getLoginType())) {
+        if(LoginType.JSON.equals(securityProperties.getBrowser().getLoginType())) {
             // 然后把Authentication转为JSON返回前台，需要工具类objectMapper
             response.setContentType("application/json;charset=UTF-8");
             // 这就把authentication转化为json了，这个工具类很好用啊

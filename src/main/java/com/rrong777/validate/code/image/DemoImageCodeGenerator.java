@@ -1,6 +1,6 @@
-package com.rrong777.utils.code.image;
+package com.rrong777.validate.code.image;
 
-import com.rrong777.utils.code.ValidateCodeGenerator;
+import com.rrong777.validate.code.ValidateCodeGenerator;
 import org.springframework.web.context.request.ServletWebRequest;
 
 // 自己注入一个  覆盖掉默认的验证码生成逻辑。但是用这个会抛空指针，因为没有返回，这里只是示范如何覆盖掉默认的逻辑

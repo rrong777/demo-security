@@ -1,4 +1,4 @@
-package com.rrong777.utils.code.sms;
+package com.rrong777.utils.sms;
 
 /**
  * @author wuqr

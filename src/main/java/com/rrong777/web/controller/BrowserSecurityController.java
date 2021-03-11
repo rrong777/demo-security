@@ -1,6 +1,6 @@
 package com.rrong777.web.controller;
 
-import com.rrong777.web.properties.SecurityProerties;
+import com.rrong777.web.properties.SecurityProperties;
 import com.rrong777.web.support.SimpleResponse;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class BrowserSecurityController {
     private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Autowired
-    private SecurityProerties securityProerties;
+    private SecurityProperties securityProperties;
     /**
      * 当需要身份认证时，跳转到这里
      * 比如 访问/user还没登录，先跳转到这里，给前台返回错误信息。
@@ -59,7 +59,7 @@ public class BrowserSecurityController {
             if(StringUtils.endsWithIgnoreCase(targetUrl, ".html")) {
                 // 第三个参数就是要跳转的url。这里就是第二个问题，不可能永远的跳转到标准登录页（有app 有web 我想自定义，
                 // 我如果自定义了就到我自定义的登录页去，没有自定义就到你这个标准登录页） 我要让别人可以配置
-                redirectStrategy.sendRedirect(request, response,securityProerties.getBrowser().getLoginPage());
+                redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
             }
         }
         return new SimpleResponse("访问的服务需要身份认证！");

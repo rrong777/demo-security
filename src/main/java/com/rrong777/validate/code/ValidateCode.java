@@ -1,6 +1,7 @@
-package com.rrong777.utils.code.sms;
+package com.rrong777.validate.code;
 
 import com.rrong777.utils.sms.SmsUtils;
+import com.rrong777.utils.sms.VerificationCodeUtils;
 
 import java.time.LocalDateTime;
 
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
  * smscode又不合适，所以改名叫ValidateCode
  */
 public class ValidateCode {
+    private static final long serialVersionUID = -436475944223625617L;
     // 短信验证码
     private String code;
     // 短信验证码过期时间

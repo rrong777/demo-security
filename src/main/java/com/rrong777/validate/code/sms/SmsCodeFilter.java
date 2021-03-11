@@ -1,9 +1,9 @@
-package com.rrong777.utils.sms;
+package com.rrong777.validate.code.sms;
 
-import com.rrong777.utils.code.ValidateCodeException;
-import com.rrong777.utils.code.ValidateCodeProcessor;
-import com.rrong777.utils.code.sms.ValidateCode;
-import com.rrong777.web.properties.SecurityProerties;
+import com.rrong777.validate.code.ValidateCode;
+import com.rrong777.validate.code.ValidateCodeException;
+import com.rrong777.validate.code.ValidateCodeProcessor;
+import com.rrong777.web.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
@@ -27,7 +27,7 @@ import java.util.Set;
 public class SmsCodeFilter extends OncePerRequestFilter implements InitializingBean {
     private AuthenticationFailureHandler authenticationFailureHandler;
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
-    private SecurityProerties securityProerties;
+    private SecurityProperties securityProperties;
 
 
     private Set<String> urls = new HashSet<>();
@@ -37,7 +37,7 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
     @Override
     public void afterPropertiesSet() throws ServletException {
         super.afterPropertiesSet();
-        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(securityProerties.getCode().getSms().getUrl(), ",");
+        String[] configUrls = StringUtils.splitByWholeSeparatorPreserveAllTokens(securityProperties.getValidateCode().getSmsCode().getUrl(), ",");
         if(configUrls != null) {
             for(String configUrl : configUrls) {
                 urls.add(configUrl);
@@ -46,12 +46,12 @@ public class SmsCodeFilter extends OncePerRequestFilter implements InitializingB
         urls.add("/authentication/mobile");
     }
 
-    public SecurityProerties getSecurityProerties() {
-        return securityProerties;
+    public SecurityProperties getSecurityProperties() {
+        return securityProperties;
     }
 
-    public void setSecurityProerties(SecurityProerties securityProerties) {
-        this.securityProerties = securityProerties;
+    public void setSecurityProperties(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
     }
 
     public AuthenticationFailureHandler getAuthenticationFailureHandler() {

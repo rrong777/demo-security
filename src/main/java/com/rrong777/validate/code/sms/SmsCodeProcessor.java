@@ -1,6 +1,7 @@
-package com.rrong777.utils.code.sms;
+package com.rrong777.validate.code.sms;
 
-import com.rrong777.utils.code.impl.AbstractValidateCodeProcessor;
+import com.rrong777.validate.code.ValidateCode;
+import com.rrong777.validate.code.impl.AbstractValidateCodeProcessor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.ServletRequestUtils;

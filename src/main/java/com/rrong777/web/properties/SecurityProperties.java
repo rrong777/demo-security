@@ -6,11 +6,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 // properties配置类就是默认配置，配置类的默认属性就是默认配置
 // 而配置文件application.yml中的配置就是应用级别配置，代码不修改，打好包就不改变了，是默认配置，而配置文件可以修改
 @ConfigurationProperties(prefix = "rrong777.security")
-public class SecurityProerties {
+public class SecurityProperties {
     // 其中 rrong777.security.browser 开头的配置项 都会映射到
     private BrowserProperties browser = new BrowserProperties();
 
-    private ValidateCodeProperties code = new ValidateCodeProperties();
+    private ValidateCodeProperties validateCode = new ValidateCodeProperties();
     public BrowserProperties getBrowser() {
         return browser;
     }
@@ -19,11 +19,11 @@ public class SecurityProerties {
         this.browser = browser;
     }
 
-    public ValidateCodeProperties getCode() {
-        return code;
+    public ValidateCodeProperties getValidateCode() {
+        return validateCode;
     }
 
-    public void setCode(ValidateCodeProperties code) {
-        this.code = code;
+    public void setValidateCode(ValidateCodeProperties validateCode) {
+        this.validateCode = validateCode;
     }
 }

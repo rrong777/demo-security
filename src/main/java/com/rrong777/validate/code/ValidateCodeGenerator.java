@@ -1,9 +1,12 @@
-package com.rrong777.utils.code;
+package com.rrong777.validate.code;
 
-import com.rrong777.utils.code.image.ImageCode;
-import com.rrong777.utils.code.sms.ValidateCode;
 import org.springframework.web.context.request.ServletWebRequest;
 
 public interface ValidateCodeGenerator {
+    /**
+     * 图形验证码实现方法接口
+     * @param request
+     * @return
+     */
     ValidateCode generate(ServletWebRequest request);
 }

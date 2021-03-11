@@ -41,7 +41,7 @@ security:
 #rrong777:
 #  security:
 #    code:
-#      image:
+#      imageCode:
 #        length: 6
 ##        上面应用级的配置，会覆盖掉默认配置
 #        width: 100

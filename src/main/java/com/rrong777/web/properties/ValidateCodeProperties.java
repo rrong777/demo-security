@@ -5,22 +5,22 @@ package com.rrong777.web.properties;
  */
 public class ValidateCodeProperties {
     // new出来的对象就有默认的
-    private ImageCodeProperties image = new ImageCodeProperties();
-    private SmsCodeProperties sms = new SmsCodeProperties();
+    private ImageCodeProperties imageCode = new ImageCodeProperties();
+    private SmsCodeProperties smsCode = new SmsCodeProperties();
 
-    public SmsCodeProperties getSms() {
-        return sms;
+    public ImageCodeProperties getImageCode() {
+        return imageCode;
     }
 
-    public void setSms(SmsCodeProperties sms) {
-        this.sms = sms;
+    public void setImageCode(ImageCodeProperties imageCode) {
+        this.imageCode = imageCode;
     }
 
-    public ImageCodeProperties getImage() {
-        return image;
+    public SmsCodeProperties getSmsCode() {
+        return smsCode;
     }
 
-    public void setImage(ImageCodeProperties image) {
-        this.image = image;
+    public void setSmsCode(SmsCodeProperties smsCode) {
+        this.smsCode = smsCode;
     }
 }

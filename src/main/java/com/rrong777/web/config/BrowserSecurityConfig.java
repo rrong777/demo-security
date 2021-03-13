@@ -3,6 +3,7 @@ package com.rrong777.web.config;
 import com.rrong777.validate.code.ValidateCodeFilter;
 import com.rrong777.validate.code.ValidateCodeSecurityConfig;
 import com.rrong777.validate.code.sms.SmsCodeFilter;
+import com.rrong777.web.properties.SecurityConstants;
 import com.rrong777.web.properties.SecurityProperties;
 import com.rrong777.web.security.FormAuthenticationConfig;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,6 +70,13 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                 .userDetailsService(userDetailsService)
                 .and()
                 .authorizeRequests()
+                .antMatchers(
+                        SecurityConstants.DEFAULT_UNAUTHENTICATION_URL,
+                        SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
+                        securityProperties.getBrowser().getLoginPage(),
+                        SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX+"/*")
+                        .permitAll()
+                .anyRequest().authenticated()
                 .and()
                 .csrf().disable();
 

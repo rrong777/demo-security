@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.ServletWebRequest;
 
 // 短信验证码直接声明成component，不像图形验证码一样各种生成逻辑，就是短信服务商
-@Component("smsCodeGenerator")
+@Component("smsValidateCodeGenerator")
 public class SmsCodeGenarator implements ValidateCodeGenerator {
     @Autowired
     private SecurityProperties securityProperties;

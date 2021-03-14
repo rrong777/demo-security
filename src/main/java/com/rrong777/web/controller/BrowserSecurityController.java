@@ -1,5 +1,6 @@
 package com.rrong777.web.controller;
 
+import com.rrong777.web.properties.SecurityConstants;
 import com.rrong777.web.properties.SecurityProperties;
 import com.rrong777.web.support.SimpleResponse;
 import org.apache.commons.lang.StringUtils;
@@ -66,7 +67,7 @@ public class BrowserSecurityController {
         return new SimpleResponse("访问的服务需要身份认证！");
     }
 
-    @GetMapping("/session/invalid")
+    @GetMapping(SecurityConstants.DEFAULT_SESSION_INVALID_URL)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public SimpleResponse sessionInvalid() {
         String message = "session失效";

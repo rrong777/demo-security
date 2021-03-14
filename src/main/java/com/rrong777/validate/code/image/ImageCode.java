@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 /**
  * 图片验证码
+ * BufferedImage 这个对象实际上是没有实现Serializable 接口的，这个又是jdk提供给我们的，但是你想，我们存放到session的时候，只把
+ * 验证码和过期时间存进去不就好了。图片存进去干嘛
+ * spring-session自动帮我们完成了session在redis里面的维护。
  */
 public class ImageCode extends ValidateCode {
 

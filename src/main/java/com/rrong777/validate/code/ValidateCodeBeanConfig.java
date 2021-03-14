@@ -5,10 +5,13 @@ import com.rrong777.validate.code.image.ImageCodeGenerator;
 import com.rrong777.validate.code.sms.DefaultSmsCodeSender;
 import com.rrong777.validate.code.sms.SmsCodeSender;
 import com.rrong777.web.properties.SecurityProperties;
+import com.rrong777.web.session.Rrrong777ExpiredSessionStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.web.session.InvalidSessionStrategy;
+import org.springframework.security.web.session.SessionInformationExpiredStrategy;
 
 @Configuration
 public class ValidateCodeBeanConfig {

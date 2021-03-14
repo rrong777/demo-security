@@ -60,7 +60,8 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode>
      * @param validateCode
      */
     private void save(ServletWebRequest request, C validateCode) {
-        // 只将验证码的验证码和过期时间存入session
+        // 只将验证码的验证码和过期时间存入session.这里本来是将类型C的校验码对象直接放到session里面去，当session变为redis的时候
+        // 图形验证码中的bufferImage属性没有序列化，而且是jdk提供的，那我们不放入redis管理的session即可
         ValidateCode code = new ValidateCode(validateCode.getCode(), validateCode.getExpireTime());
         validateCodeRepository.save(request, code, getValidateCodeType(request));
     }

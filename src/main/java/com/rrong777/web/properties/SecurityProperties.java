@@ -15,6 +15,8 @@ public class SecurityProperties {
         return browser;
     }
 
+
+
     public void setBrowser(BrowserProperties browser) {
         this.browser = browser;
     }

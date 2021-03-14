@@ -6,17 +6,24 @@ import org.springframework.security.web.session.SessionInformationExpiredStrateg
 import javax.servlet.ServletException;
 import java.io.IOException;
 
-public class Rrrong777ExpiredSessionStrategy implements SessionInformationExpiredStrategy {
-    /**
-     *
-     * @param eventØ session超时事件 这个事件封装了导致了踢用户这个行为产生的请求和响应，从这个请求里你就可以获得你需要记录的一些信息
-     * @throws IOException
-     * @throws ServletException
+public class Rrrong777ExpiredSessionStrategy extends AbstractSessionStrategy implements SessionInformationExpiredStrategy {
+    public Rrrong777ExpiredSessionStrategy(String invalidSessionUrl) {
+        super(invalidSessionUrl);
+    }
+
+    /* (non-Javadoc)
+     * @see org.springframework.security.web.session.SessionInformationExpiredStrategy#onExpiredSessionDetected(org.springframework.security.web.session.SessionInformationExpiredEvent)
      */
     @Override
-    public void onExpiredSessionDetected(SessionInformationExpiredEvent eventØ) throws IOException, ServletException {
-        // 没设置响应的contenttype  会变成乱码
-        eventØ.getResponse().setContentType("application/json;charset=UTF-8");
-        eventØ.getResponse().getWriter().write("并发登录");
+    public void onExpiredSessionDetected(SessionInformationExpiredEvent event) throws IOException, ServletException {
+        onSessionInvalid(event.getRequest(), event.getResponse());
+    }
+
+    /* (non-Javadoc)
+     * @see com.imooc.security.browser.session.AbstractSessionStrategy#isConcurrency()
+     */
+    @Override
+    protected boolean isConcurrency() {
+        return true;
     }
 }

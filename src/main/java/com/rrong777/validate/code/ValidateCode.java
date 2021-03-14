@@ -3,6 +3,7 @@ package com.rrong777.validate.code;
 import com.rrong777.utils.sms.SmsUtils;
 import com.rrong777.utils.sms.VerificationCodeUtils;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -12,8 +13,11 @@ import java.time.LocalDateTime;
  * @date 2020/4/19 13:51
  * 但是图片验证码要继承这个类，因为图片验证码只是多了一个图片属性，图片验证码继承
  * smscode又不合适，所以改名叫ValidateCode
+ *
+ * 没有实现Serializable 的话 就是不可序列化的。 因为现在实际上session是放到redis去管理，生成图形验证码的时候是把验证码放到session里面去。
+ * 后面请求来 再从session里面拿出来验。现在放到session里实际上就是放到redis里面，放到redis里面的东西都是要求可序列化的。
  */
-public class ValidateCode {
+public class ValidateCode implements Serializable {
     private static final long serialVersionUID = -436475944223625617L;
     // 短信验证码
     private String code;

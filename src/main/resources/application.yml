@@ -8,12 +8,18 @@ spring:
     password: 123456t
 # No Spring Session store is configured: set the 'spring.session.store-type' property
 # 加入了SpringSession的集群session管理依赖，没有做默认配置，就会报错
+  redis:
+    host: 106.13.1.55
   session:
-    store-type: none
+    store-type: REDIS
+
+
 
 
 server:
   port: 8070
+  session:
+    timeout: 600 # 单位是秒
 
 # Using default security password: e35ee0c3-67d0-440d-b5fd-28a8e1ea8377
 # 加入spring-security的依赖之后默认会开启校验。没提供配置，会给你默认的配置默认的密码

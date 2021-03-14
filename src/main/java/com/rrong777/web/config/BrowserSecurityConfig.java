@@ -107,7 +107,8 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
                             SecurityConstants.DEFAULT_LOGIN_PROCESSING_URL_MOBILE,
                             securityProperties.getBrowser().getLoginPage(),
                             SecurityConstants.DEFAULT_VALIDATE_CODE_URL_PREFIX+"/*",
-                            SecurityConstants.DEFAULT_SESSION_INVALID_URL)
+                            SecurityConstants.DEFAULT_SESSION_INVALID_URL,
+                            "/oauth/authorize")
                             .permitAll()
                     .anyRequest()
                     .authenticated()

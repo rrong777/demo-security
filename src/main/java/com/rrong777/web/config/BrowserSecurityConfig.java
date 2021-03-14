@@ -72,8 +72,9 @@ public class BrowserSecurityConfig extends WebSecurityConfigurerAdapter {
         // 表单登录配置项
         formAuthenticationConfig.configure(http);
 
-        http.apply(validateCodeSecurityConfig)
-                .and()
+        // 资源服务器使用验证码会有点错误，所以先注释掉
+        http//.apply(validateCodeSecurityConfig)
+              //  .and()
                     .apply(smsCodeAuthenticationSecurityConfig)
                 .and()
                     .rememberMe()

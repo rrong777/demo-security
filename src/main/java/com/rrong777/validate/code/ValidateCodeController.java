@@ -88,7 +88,7 @@ public class ValidateCodeController {
                            HttpServletResponse response,
                            @PathVariable String type)
             throws Exception {
-        validateCodeProcessors.get(type + "ValidateCodeProcessor").create(new ServletWebRequest(request, response));
+        validateCodeProcessors.get(type + "ValidateCodeProcessor"). create(new ServletWebRequest(request, response));
     }
 
 

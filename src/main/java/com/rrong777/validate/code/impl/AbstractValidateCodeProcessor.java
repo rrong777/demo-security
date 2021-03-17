@@ -2,6 +2,8 @@ package com.rrong777.validate.code.impl;
 
 import com.rrong777.validate.code.*;
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
@@ -13,7 +15,7 @@ import java.util.Map;
 public abstract class AbstractValidateCodeProcessor<C extends ValidateCode>
         implements ValidateCodeProcessor {
 
-
+    Logger logger = LoggerFactory.getLogger(getClass());
     /**
      * 收集系统中所有的 {@link ValidateCodeGenerator} 接口的实现。
      */
@@ -101,23 +103,28 @@ public abstract class AbstractValidateCodeProcessor<C extends ValidateCode>
             codeInRequest = ServletRequestUtils.getStringParameter(request.getRequest(),
                     codeType.getParamNameOnValidate());
         } catch (ServletRequestBindingException e) {
+            logger.info("获取验证码的值失败");
             throw new ValidateCodeException("获取验证码的值失败");
         }
 
         if (StringUtils.isBlank(codeInRequest)) {
+            logger.info("验证码的值不能为空");
             throw new ValidateCodeException(codeType + "验证码的值不能为空");
         }
 
         if (codeInSession == null) {
+            logger.info("验证码不存在");
             throw new ValidateCodeException(codeType + "验证码不存在");
         }
 
         if (codeInSession.isExpried()) {
+            logger.info("验证码不存在");
             validateCodeRepository.remove(request, codeType);
             throw new ValidateCodeException(codeType + "验证码已过期");
         }
 
         if (!StringUtils.equals(codeInSession.getCode(), codeInRequest)) {
+            logger.info("验证码不存在");
             throw new ValidateCodeException(codeType + "验证码不匹配");
         }
 

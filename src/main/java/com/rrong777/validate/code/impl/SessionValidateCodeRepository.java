@@ -12,7 +12,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 /**
  * 基于session的验证码存取器
  */
-@Component
+//@Component
 public class SessionValidateCodeRepository implements ValidateCodeRepository {
 
     /**

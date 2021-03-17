@@ -10,6 +10,8 @@ public class SecurityProperties {
     // 其中 rrong777.security.browser 开头的配置项 都会映射到
     private BrowserProperties browser = new BrowserProperties();
 
+    private OAuth2Properties oauth2 = new OAuth2Properties();
+
     private ValidateCodeProperties validateCode = new ValidateCodeProperties();
     public BrowserProperties getBrowser() {
         return browser;
@@ -27,5 +29,13 @@ public class SecurityProperties {
 
     public void setValidateCode(ValidateCodeProperties validateCode) {
         this.validateCode = validateCode;
+    }
+
+    public OAuth2Properties getOauth2() {
+        return oauth2;
+    }
+
+    public void setOauth2(OAuth2Properties oauth2) {
+        this.oauth2 = oauth2;
     }
 }

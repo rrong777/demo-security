@@ -27,10 +27,11 @@ security:
   basic:
     enabled: false
     # 如果没有配置每次重新启动自动生成一个。这里配置的就是我的security可以给那些第三方应用程序授权，你带着这个clientId来找我就可以了
-  oauth2:
-    client:
-      clientId: rrong777
-      clientSecret: 1234
+#  oauth2:
+#    client:
+#      clientId: rrong777
+#      clientSecret: 1234
+#      这个东西已经不起作用了
 
 
 # 当我们使用我们这个安全模块的项目 配置了下面这个loginPage的时候，我们就用这个loginPage，没有做这个配置的时候，就用我们默认的标准登录页面。
@@ -57,3 +58,13 @@ security:
 ##        上面应用级的配置，会覆盖掉默认配置
 #        width: 100
 #        url: /user,/user/*
+
+rrong777:
+  security:
+    oauth2: # 因为下面的clients是一个数组 所以可以配置多个
+      clients[0].clientId = rrong777
+      clients[0].clientSecret = 666666
+      clients[0].accessTokenValiditySeconds = 7200
+      clients[1].clientId = test
+      clients[1].clientSecret = test
+      clients[1].accessTokenValiditySeconds = 7200

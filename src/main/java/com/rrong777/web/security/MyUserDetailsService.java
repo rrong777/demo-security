@@ -34,7 +34,7 @@ public class MyUserDetailsService implements UserDetailsService {
         // 将密码加密之后返回，就可以登录了
         String password = passwordEncoder.encode("123456");
         logger.info("假装从数据库查密码：" + password);
-        return new User(username,password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin"));
+        return new User(username,password, AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
         // 四个布尔值分别表示账户可用。是否过期，密码没过期，账号是否被冻结
 //        return new User(username,"123456",
 //                true,true,true,false,

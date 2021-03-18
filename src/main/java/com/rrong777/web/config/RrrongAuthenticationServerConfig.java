@@ -14,6 +14,9 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.A
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerEndpointsConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
+import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 
 /**
  * 使用EnableAuthorizationServer注解的时候
@@ -34,13 +37,14 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     private AuthenticationManager authenticationManager;
     @Autowired
     private UserDetailsService userDetailsService;
-
+    @Autowired
+    private TokenStore tokenStore;
     @Autowired
     private SecurityProperties securityProperties;
 
     @Override
-    public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
-        super.configure(security);
+    public void configure(AuthorizationServerSecurityConfigurer http) throws Exception {
+        super.configure(http);
     }
 
     /**
@@ -87,7 +91,9 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
      */
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
-        endpoints.authenticationManager(authenticationManager)
+        // token是频繁访问的一个东西，把他存到redis里面去
+        endpoints.tokenStore(tokenStore)
+                .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
     }
 }

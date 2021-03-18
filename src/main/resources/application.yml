@@ -62,9 +62,9 @@ security:
 rrong777:
   security:
     oauth2: # 因为下面的clients是一个数组 所以可以配置多个
-      clients[0].clientId = rrong777
-      clients[0].clientSecret = 666666
-      clients[0].accessTokenValiditySeconds = 7200
-      clients[1].clientId = test
-      clients[1].clientSecret = test
-      clients[1].accessTokenValiditySeconds = 7200
+      clients[0].clientId: rrong777
+      clients[0].clientSecret: 666666
+      clients[0].accessTokenValiditySeconds: 3222
+      clients[1].clientId: test
+      clients[1].clientSecret: test
+      clients[1].accessTokenValiditySeconds: 7200

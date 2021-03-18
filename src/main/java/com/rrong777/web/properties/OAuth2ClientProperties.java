@@ -3,7 +3,7 @@ package com.rrong777.web.properties;
 public class OAuth2ClientProperties {
     private String clientId;
     private String clientSecret;
-    private int accessTokenValiditySeconds;
+    private int accessTokenValiditySeconds = 7200; // 这里给一个默认值，如果不写默认值的话默认就是0 ，如果这个过期时间是0 就是不会过期的。
     // 能配置的都可以声明在这里
 
 

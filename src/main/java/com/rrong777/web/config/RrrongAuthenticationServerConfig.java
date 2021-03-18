@@ -53,20 +53,18 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     @Override
     public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 //        clients.inMemory(). 可以一直 . 链式调用下去，也可以用返回值来调用 本来链式调用就是上一个方法返回值去调用下一个调用
-//        InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
-//        if(ArrayUtils.isNotEmpty(securityProperties.getOauth2().getClients())) {
-//            for(OAuth2ClientProperties client : securityProperties.getOauth2().getClients()) {
-//
-//            }
-//        }
-        // 把ClientId这些存在内存中即可
-        clients.inMemory().withClient("rrong777") // clientId
-                .secret("6666") // clientSecret
-                .accessTokenValiditySeconds(7200) // 令牌有效期
-                .authorizedGrantTypes("refresh_token", "password") // 你发的这个clientId对应的第三方应用在认证服务器上支持的认证方式 四种方式加上一种令牌刷新的方式
-                // 这里配置你rrong777这个客户端，只能支持refresh_token password这两种模式
-                .scopes("all","read","write");// 你能发出去的权限有哪些，（就是当前clientId能请求的权限）。这里配置你rrong777这个客户端， 只能scope只能取值上面这三个，或者没有scope参数就给你返回三个
-//        .and().withClient()... 可以链式的一直配置下去
+        // 令牌是存在内存当中的，一旦服务重启 令牌就消失了
+        InMemoryClientDetailsServiceBuilder builder = clients.inMemory();
+        if(ArrayUtils.isNotEmpty(securityProperties.getOauth2().getClients())) {
+            for(OAuth2ClientProperties client : securityProperties.getOauth2().getClients()) {
+                builder.withClient(client.getClientId())
+                        .secret(client.getClientSecret())
+                        .accessTokenValiditySeconds(client.getAccessTokenValiditySeconds())
+                        .authorizedGrantTypes("refresh_token", "password") // 不希望用户配置的 可以直接写死在这里
+                        .scopes("all","read","write");
+            }
+        }
+
 
     }
 

@@ -16,8 +16,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 使用EnableAuthorizationServer注解的时候
@@ -43,6 +48,8 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired(required = false)
+    private TokenEnhancer jwtTokenEnhancer;
     // 只有在jwt 配置下才生效
     @Autowired(required = false)
     private JwtAccessTokenConverter jwtAccessTokenConverter;
@@ -99,8 +106,21 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
         endpoints.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
-        if(jwtAccessTokenConverter != null) {
-            endpoints.accessTokenConverter(jwtAccessTokenConverter);
+        if(jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
+            // 在DefaultTokenService里面， new的是一个DefaultOauth2AccessToken，拿的是一个随机的UUID去new的，写在一个私有方法里面，而且没有接口封装、这块
+            // DefaultOauth2AccessToken 生成的代码是没办法改变的。你只能用增强器去改变DefaultOauth2AccessToken里面的内容。把UUID改成jwt(Converter也算是增强器)
+            // 然后往里面加一些信息
+            // 所以要用这个chain把converter和enhancer链接在一起。一个是转换为jwt 一个是往里面加信息加内容。
+            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+            List<TokenEnhancer> enhancers = new ArrayList<>();
+            // 往token添加信息
+            enhancers.add(jwtTokenEnhancer);
+            // 密签加密签名
+            enhancers.add(jwtAccessTokenConverter);
+            enhancerChain.setTokenEnhancers(enhancers);
+            endpoints
+                    .tokenEnhancer(enhancerChain)
+                    .accessTokenConverter(jwtAccessTokenConverter);
         }
     }
 }

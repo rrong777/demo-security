@@ -17,6 +17,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 
 /**
  * 使用EnableAuthorizationServer注解的时候
@@ -42,6 +43,9 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     @Autowired
     private SecurityProperties securityProperties;
 
+    // 只有在jwt 配置下才生效
+    @Autowired(required = false)
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
     @Override
     public void configure(AuthorizationServerSecurityConfigurer http) throws Exception {
         super.configure(http);
@@ -75,7 +79,7 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     /**
      * TokenEndpoint 是处理oauth Token的入口
      * 这里的endpoints就表示是TokenEndpoint入参，这个就是用来处理/Oauth/token，就是请求里用token去认证，而不是用session里的认证信息
-     * 这个很基础啊，虽然现在不用，但是你要知道，浏览器session是这么一回事。
+     * 这个很基础啊，虽然现在不用，但是你要 知道，浏览器session是这么一回事。
      * 执行一系列的业务逻辑，包括传下来的这个code或者用户名密码。去取用户信息等等。
      *
      * configure(AuthorizationServerEndpointsConfigurer endpoints)
@@ -95,5 +99,8 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
         endpoints.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
+        if(jwtAccessTokenConverter != null) {
+            endpoints.accessTokenConverter(jwtAccessTokenConverter);
+        }
     }
 }

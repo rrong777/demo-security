@@ -75,6 +75,7 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
                 builder.withClient(client.getClientId())
                         .secret(client.getClientSecret())
                         .accessTokenValiditySeconds(client.getAccessTokenValiditySeconds())
+                        .refreshTokenValiditySeconds(2592000)// 设置refresh_token的失效时间
                         .authorizedGrantTypes("refresh_token", "password") // 不希望用户配置的 可以直接写死在这里
                         .scopes("all","read","write");
             }

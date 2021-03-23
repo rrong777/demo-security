@@ -1,12 +1,15 @@
 package com.rrong777.web.config;
 
+import com.rrong777.web.jwt.RrrongJwtEnhancer;
 import com.rrong777.web.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
@@ -52,6 +55,12 @@ public class TokenStoreConfig {
             // 设置签名使用的密钥
             accessTokenConverter.setSigningKey(securityProperties.getOauth2().getJwtSigningKey());
             return accessTokenConverter;
+        }
+        // 默认的。你有我就不用
+        @Bean
+        @ConditionalOnMissingBean(name="jwtTokenEnhancer")
+        public TokenEnhancer jwtTokenEnhancer() {
+            return new RrrongJwtEnhancer();
         }
     }
 }

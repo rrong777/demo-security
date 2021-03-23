@@ -3,19 +3,27 @@ package com.rrong777.web.controller;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.rrong777.dto.User;
 import com.rrong777.dto.UserQueryCondition;
+import com.rrong777.web.properties.SecurityProperties;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang.builder.ToStringStyle;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,14 +59,24 @@ import java.util.List;
 @RestController
 @RequestMapping(value="/user")
 public class UserController {
+    @Autowired
+    private SecurityProperties securityProperties;
     @GetMapping("/me")
 //    public Object getCurrentUser(Authentication authentication) {
     //可以直接在controller入参里面入一个authentication，security会把认证信息对象塞给你
 
     // 但是考虑到我可能不需要所有的认证信息，我只要对应的用户信息，这里就可以用这个注解，把用户返回
-    public Object getCurrentUser(@AuthenticationPrincipal UserDetails user) {
-        // 这就可以拿到线程中的authentication对象。但是这样有点麻烦，
-//        return SecurityContextHolder.getContext().getAuthentication();
+    public Object getCurrentUser(Authentication user, HttpServletRequest request) {
+        // Authentication 这里的这个 是security替我们封装的。 security并不知道我们有附加信息，所以里面是没有company这种我们自定义的信息的
+
+
+        String header = request.getHeader("Authorization");
+        String token = StringUtils.substringAfter(header, "bearer ");
+        // 我们签名的时候是使用SpringSecurity的方法，用的默认就是utf-8,而在这里验签的时候，使用的是jwt的包，要自己指定编码
+        Claims claims = Jwts.parser().setSigningKey(securityProperties.getOauth2().getJwtSigningKey().getBytes(StandardCharsets.UTF_8))
+                .parseClaimsJws(token).getBody();
+        String company = (String) claims.get("company");
+        System.out.println("company --> " + company);
         return user;
     }
     // @PageableDefault指定分页参数默认值

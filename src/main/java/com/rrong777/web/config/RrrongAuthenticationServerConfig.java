@@ -16,7 +16,13 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationProcessingFilter;
 import org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 使用EnableAuthorizationServer注解的时候
@@ -42,6 +48,11 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     @Autowired
     private SecurityProperties securityProperties;
 
+    @Autowired(required = false)
+    private TokenEnhancer jwtTokenEnhancer;
+    // 只有在jwt 配置下才生效
+    @Autowired(required = false)
+    private JwtAccessTokenConverter jwtAccessTokenConverter;
     @Override
     public void configure(AuthorizationServerSecurityConfigurer http) throws Exception {
         super.configure(http);
@@ -64,6 +75,7 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
                 builder.withClient(client.getClientId())
                         .secret(client.getClientSecret())
                         .accessTokenValiditySeconds(client.getAccessTokenValiditySeconds())
+                        .refreshTokenValiditySeconds(2592000)// 设置refresh_token的失效时间
                         .authorizedGrantTypes("refresh_token", "password") // 不希望用户配置的 可以直接写死在这里
                         .scopes("all","read","write");
             }
@@ -75,7 +87,7 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
     /**
      * TokenEndpoint 是处理oauth Token的入口
      * 这里的endpoints就表示是TokenEndpoint入参，这个就是用来处理/Oauth/token，就是请求里用token去认证，而不是用session里的认证信息
-     * 这个很基础啊，虽然现在不用，但是你要知道，浏览器session是这么一回事。
+     * 这个很基础啊，虽然现在不用，但是你要 知道，浏览器session是这么一回事。
      * 执行一系列的业务逻辑，包括传下来的这个code或者用户名密码。去取用户信息等等。
      *
      * configure(AuthorizationServerEndpointsConfigurer endpoints)
@@ -95,5 +107,21 @@ public class RrrongAuthenticationServerConfig extends AuthorizationServerConfigu
         endpoints.tokenStore(tokenStore)
                 .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);
+        if(jwtAccessTokenConverter != null && jwtTokenEnhancer != null) {
+            // 在DefaultTokenService里面， new的是一个DefaultOauth2AccessToken，拿的是一个随机的UUID去new的，写在一个私有方法里面，而且没有接口封装、这块
+            // DefaultOauth2AccessToken 生成的代码是没办法改变的。你只能用增强器去改变DefaultOauth2AccessToken里面的内容。把UUID改成jwt(Converter也算是增强器)
+            // 然后往里面加一些信息
+            // 所以要用这个chain把converter和enhancer链接在一起。一个是转换为jwt 一个是往里面加信息加内容。
+            TokenEnhancerChain enhancerChain = new TokenEnhancerChain();
+            List<TokenEnhancer> enhancers = new ArrayList<>();
+            // 往token添加信息
+            enhancers.add(jwtTokenEnhancer);
+            // 密签加密签名
+            enhancers.add(jwtAccessTokenConverter);
+            enhancerChain.setTokenEnhancers(enhancers);
+            endpoints
+                    .tokenEnhancer(enhancerChain)
+                    .accessTokenConverter(jwtAccessTokenConverter);
+        }
     }
 }
